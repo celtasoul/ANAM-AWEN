@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anam Awen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: {
+            champagne: '#FDFBF9',
+            candy: '#F9EEF2',
+            blush: '#F2D8E0',
+            rosequartz: '#D9A7B5',
+            lavender: '#D8CEF0',
+            lilac: '#C8BFE0',
+            graphite: '#3A3A40',
+            silver: '#8E8E98'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background-color: #FDFBF9; color: #3A3A40; }
+    .glass-card { background: #FFFFFF; border: 1px solid #F2D8E0; box-shadow: 0 2px 12px rgba(217, 167, 181, 0.06); }
+    .card-interactive { transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease; cursor: pointer; }
+    .card-interactive:hover { border-color: #D9A7B5; box-shadow: 0 6px 18px rgba(217, 167, 181, 0.16); transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, #D9A7B5 0%, #C8BFE0 100%); color: #FFFFFF; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 9px 10px; border-radius: 10px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; text-align: left; }
+    .nav-item:hover { background-color: rgba(242, 216, 224, 0.45); }
+    .nav-active { background-color: #F2D8E0 !important; font-weight: 700; }
+    .auto-link { color: #9B5DE5; text-decoration: underline; word-break: break-all; }
+    .auto-link:hover { color: #6D28D9; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+  <div id="loginScreen" class="fixed inset-0 bg-champagne z-50 flex items-center justify-center p-5">
+    <div class="glass-card rounded-3xl p-8 max-w-md w-full text-center space-y-6">
+      <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-tr from-rosequartz to-lavender flex items-center justify-center text-white text-2xl shadow-md">✨</div>
+      <div>
+        <h1 class="text-2xl font-bold text-graphite">Anam Awen</h1>
+        <p class="text-sm text-silver mt-1">Tu espacio de trabajo y taller web en la nube</p>
+      </div>
+      <button type="button" id="btnGoogleLogin" class="btn-primary w-full py-3.5 rounded-2xl font-semibold text-sm cursor-pointer">
+        Continuar con Google
+      </button>
+      <p id="loginError" class="text-xs text-red-500 hidden"></p>
+    </div>
+  </div>
+
+  <div id="appContainer" class="hidden w-full flex-col md:flex-row min-h-screen">
+    <aside class="w-full md:w-72 bg-candy/80 border-r border-blush p-3.5 flex flex-col justify-between">
+      <div class="space-y-4">
+        <div class="px-2 pt-1 font-bold text-base uppercase tracking-wider">ANAM AWEN</div>
+        <div class="space-y-1">
+          <button type="button" data-tab="inicio" id="nav-inicio" class="nav-item nav-active cursor-pointer"><span>🏠 INICIO</span></button>
+          <button type="button" data-tab="captura" id="nav-captura" class="nav-item cursor-pointer">
+            <span>⚡ IDEA BAG (TREN)</span>
+            <span id="badge-inbox" class="text-[11px] bg-white px-2 py-0.5 rounded-full border border-blush font-semibold">0</span>
+          </button>
+          <button type="button" data-tab="taller" id="nav-taller" class="nav-item cursor-pointer">
+            <span>💻 TALLER WEB ODONTO</span>
+            <span class="text-[10px] bg-lavender/60 px-1.5 py-0.5 rounded font-semibold">LIVE</span>
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-blush/60">
+          <p class="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-silver mb-1.5">PRIVADO · CARPETAS</p>
+          <div class="space-y-1">
+            <button type="button" data-tab="odonto" id="nav-odonto" class="nav-item cursor-pointer"><span>🦷 ODONTO CLINIC</span></button>
+            <button type="button" data-tab="cursos" id="nav-cursos" class="nav-item cursor-pointer"><span>🎓 CURSOS WEB-IA</span></button>
+            <button type="button" data-tab="prompts" id="nav-prompts" class="nav-item cursor-pointer"><span>🤖 BÓVEDA DE PROMPTS</span></button>
+            <button type="button" data-tab="proyectos" id="nav-proyectos" class="nav-item cursor-pointer"><span>📂 PROYECTOS</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-blush/60 text-xs text-silver px-2 space-y-2 mt-4">
+        <button type="button" id="btnImportBatchSide" class="w-full py-2 px-2.5 rounded-xl bg-white hover:bg-blush/40 border border-blush text-[11px] font-semibold uppercase tracking-wide text-graphite text-left flex items-center justify-between cursor-pointer">
+          <span>📥 IMPORTAR LOTE CURSOS</span>
+          <span>→</span>
+        </button>
+        <div class="flex items-center justify-between">
+          <span class="truncate max-w-[150px]" id="userEmail">Conectado</span>
+          <button type="button" id="btnLogout" class="underline hover:text-graphite uppercase text-[11px] font-semibold cursor-pointer">SALIR</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
+      <div id="toastBanner" class="hidden mb-4 px-4 py-2.5 rounded-xl bg-lavender/40 border border-lilac text-xs font-semibold text-graphite"></div>
+
+      <section id="sec-inicio" class="space-y-4">
+        <h1 class="text-2xl font-bold text-graphite">Hola, Celta ✨</h1>
+        <p class="text-sm text-silver">Elegí una sección en el menú lateral para empezar o hacé clic en cualquier tarjeta para abrirla.</p>
+      </section>
+
+      <section id="sec-captura" class="hidden space-y-5">
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <h2 class="text-lg font-bold uppercase">⚡ IDEA BAG (TREN)</h2>
+          <textarea id="quickText" rows="3" placeholder="Anotá una idea o pegá un enlace..." class="w-full p-3 rounded-xl bg-champagne border border-blush text-sm"></textarea>
+          <div class="flex justify-between items-center gap-2">
+            <select id="quickFolder" class="px-3 py-2 rounded-xl bg-champagne border border-blush text-xs">
+              <option value="#general">📁 General</option>
+              <option value="#odonto">🦷 Odonto Clinic</option>
+              <option value="#cursos">🎓 Cursos Web-IA</option>
+              <option value="#tren">🚆 En el tren</option>
+            </select>
+            <button type="button" id="btnSaveQuickNote" class="btn-primary px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer">Guardar nota</button>
+          </div>
+        </div>
+        <div id="inboxList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+
+      <section id="sec-taller" class="hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-xl font-bold uppercase">💻 TALLER WEB — VISTA PREVIA EN VIVO</h2>
+            <p class="text-xs text-silver">Editá el código HTML y mirá el resultado al instante.</p>
+          </div>
+          <button type="button" id="btnSaveWebCode" class="btn-primary px-4 py-1.5 rounded-xl text-xs font-semibold cursor-pointer">💾 Guardar cambios</button>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <textarea id="webCodeEditor" spellcheck="false" class="w-full h-[440px] p-3 rounded-xl bg-[#28282E] text-[#F9EEF2] font-mono text-xs leading-relaxed focus:outline-none"></textarea>
+          <div class="glass-card rounded-2xl p-3 bg-champagne">
+            <iframe id="webLiveFrame" class="w-full h-[416px] bg-white rounded-xl border border-blush"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section id="sec-odonto" class="hidden space-y-3">
+        <div class="glass-card rounded-2xl p-5">
+          <h2 class="text-lg font-bold mb-3 uppercase">🦷 ODONTO CLINIC</h2>
+          <div id="odontoNotesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+      </section>
+
+      <section id="sec-cursos" class="hidden space-y-3">
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h2 class="text-lg font-bold uppercase">🎓 CURSOS WEB-IA</h2>
+            <button type="button" id="btnImportBatchCursos" class="px-4 py-2 rounded-xl bg-candy hover:bg-blush/50 border border-blush text-xs font-semibold uppercase cursor-pointer">📥 IMPORTAR LOTE AHORA</button>
+          </div>
+          <p id="cursosStatus" class="text-xs text-silver mb-3"></p>
+          <div id="cursosNotesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+      </section>
+
+      <section id="sec-prompts" class="hidden space-y-4">
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <h2 class="text-lg font-bold uppercase">🤖 BÓVEDA DE PROMPTS</h2>
+          <input type="text" id="promptTitle" placeholder="Título..." class="w-full px-3 py-2 rounded-xl bg-champagne border border-blush text-sm" />
+          <textarea id="promptBody" rows="3" placeholder="Texto del prompt..." class="w-full p-3 rounded-xl bg-champagne border border-blush text-sm"></textarea>
+          <button type="button" id="btnSavePrompt" class="btn-primary px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer">Guardar Prompt</button>
+        </div>
+        <div id="promptsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+
+      <section id="sec-proyectos" class="hidden space-y-4">
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <h2 class="text-lg font-bold uppercase">📂 PROYECTOS</h2>
+          <input type="text" id="projName" placeholder="Nombre del proyecto..." class="w-full px-3 py-2 rounded-xl bg-champagne border border-blush text-sm" />
+          <textarea id="projDesc" rows="2" placeholder="Descripción..." class="w-full p-3 rounded-xl bg-champagne border border-blush text-sm"></textarea>
+          <button type="button" id="btnCreateProject" class="btn-primary px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer">Crear Proyecto</button>
+        </div>
+        <div id="projectsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL PARA ABRIR TARJETAS -->
+  <div id="detailModal" class="hidden fixed inset-0 bg-graphite/40 z-50 flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl p-6 max-w-lg w-full space-y-4">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span id="modalBadge" class="text-[11px] font-semibold uppercase px-2.5 py-0.5 rounded-full bg-candy border border-blush text-graphite"></span>
+          <h3 id="modalTitle" class="text-lg font-bold text-graphite mt-2"></h3>
+        </div>
+        <button type="button" id="btnCloseModal" class="px-2.5 py-1 rounded-lg bg-champagne border border-blush text-xs font-bold cursor-pointer">✕</button>
+      </div>
+      <div id="modalBody" class="text-sm text-graphite bg-champagne p-4 rounded-2xl border border-blush whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto"></div>
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+        <button type="button" id="btnDeleteItem" class="px-3.5 py-2 rounded-xl bg-red-50 text-red-600 border border-red-200 text-xs font-semibold cursor-pointer">🗑️ Eliminar</button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnCopyModalText" class="px-4 py-2 rounded-xl bg-candy border border-blush text-xs font-semibold cursor-pointer">📋 Copiar texto</button>
+          <button type="button" id="btnCloseModalBottom" class="btn-primary px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <template id="defaultWebTemplate"><div style="font-family:sans-serif;padding:24px;max-width:420px;margin:auto;background:#ffffff;border-radius:16px"><h2>Clínica Odontológica</h2><p>Editá este código y mirá la vista previa.</p></div></template>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, updateDoc, deleteDoc, setDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAE5qSA_n0BYaMyqYkkNxyIU_-MOwZ8Fs8",
+      authDomain: "consultor-ia-8e75c.firebaseapp.com",
+      projectId: "consultor-ia-8e75c",
+      storageBucket: "consultor-ia-8e75c.firebasestorage.app",
+      messagingSenderId: "380652211513",
+      appId: "1:380652211513:web:9cf38ab2f9963eedc62ce8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    let currentUser = null;
+    let state = { inbox: [], prompts: [], projects: [], webFiles: [] };
+    let activeWebFileId = null;
+    let selectedItem = null;
+
+    function showToast(msg) {
+      const el = document.getElementById("toastBanner");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => el.classList.add("hidden"), 4000);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function linkifyText(str) {
+      const safe = escapeHtml(str);
+      return safe.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" class="auto-link">$1 ↗</a>');
+    }
+
+    function getDefaultWebTemplate() {
+      const tpl = document.getElementById("defaultWebTemplate");
+      return tpl ? tpl.innerHTML.trim() : "<div>Clínica Odontológica</div>";
+    }
+
+    const BULK_IMPORT_BATCH = {
+      projects: [
+        { name: "Formación IA & Monetización (Consultora)", desc: "Materiales de cursos para diseñar ofertas de consultoría, agentes/flujos IA y formaciones B2B." }
+      ],
+      prompts: [
+        { title: "Voz a Guion para Reels", body: "Convierte mi audio en un guion para Reels con hook, desarrollo y CTA." },
+        { title: "Upload + Insight Ejecutivo", body: "Lee el archivo adjunto. Resume el contenido en 5 puntos clave y propón 3 acciones concretas." },
+        { title: "Instrucciones Personalizadas Base", body: "Tono: profesional pero cercano. Público: [nicho]. Formato: 3 puntos + conclusión." }
+      ],
+      inbox: [
+        { text: "Fast Cash Kit — 3 vías de monetización: A) Agentes GPT/Chatbots, B) Formación IA B2B, C) Consultoría / Automatización IA.", tag: "#cursos" },
+        { text: "Diccionario de IA | RoboJon — https://diccionario-ia.thebigschool.com/", tag: "#cursos" },
+        { text: "50 formas de usar ChatGPT — https://thebigschool.com/50-formas-chatgpt/", tag: "#cursos" },
+        { text: "Diagnóstico de tareas repetitivas con IA — https://thebigschool.com/diagnostico-tareas-ia/", tag: "#cursos" }
+      ]
+    };
+
+    function switchTab(tab) {
+      ["inicio", "captura", "taller", "odonto", "cursos", "prompts", "proyectos"].forEach((t) => {
+        document.getElementById("sec-" + t).classList.add("hidden");
+        document.getElementById("nav-" + t).classList.remove("nav-active");
+      });
+      document.getElementById("sec-" + tab).classList.remove("hidden");
+      document.getElementById("nav-" + tab).classList.add("nav-active");
+      if (tab === "taller") updateLivePreview();
+    }
+
+    function updateLivePreview() {
+      document.getElementById("webLiveFrame").srcdoc = document.getElementById("webCodeEditor").value;
+    }
+
+    function openDetailModal(type, id) {
+      let item = null;
+      let badge = "";
+      let title = "";
+      let rawText = "";
+
+      if (type === "inbox") {
+        item = state.inbox.find((x) => x.id === id);
+        if (!item) return;
+        badge = item.tag || "NOTA";
+        title = "Detalle de Nota";
+        rawText = item.text || "";
+      } else if (type === "prompts") {
+        item = state.prompts.find((x) => x.id === id);
+        if (!item) return;
+        badge = "PROMPT";
+        title = item.title || "Prompt";
+        rawText = item.body || "";
+      } else if (type === "projects") {
+        item = state.projects.find((x) => x.id === id);
+        if (!item) return;
+        badge = "PROYECTO";
+        title = item.name || "Proyecto";
+        rawText = item.desc || "Sin descripción.";
+      }
+
+      selectedItem = { type, id, rawText };
+      document.getElementById("modalBadge").textContent = badge;
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalBody").innerHTML = linkifyText(rawText);
+      document.getElementById("detailModal").classList.remove("hidden");
+    }
+
+    function closeDetailModal() {
+      selectedItem = null;
+      document.getElementById("detailModal").classList.add("hidden");
+    }
+
+    async function importBulkBatch() {
+      if (!currentUser) return;
+      const base = "users/" + currentUser.uid;
+      let addedCount = 0;
+
+      for (const p of BULK_IMPORT_BATCH.projects) {
+        if (!state.projects.some((x) => x.name === p.name)) {
+          await addDoc(collection(db, base + "/projects"), { ...p, createdAt: serverTimestamp() });
+          addedCount++;
+        }
+      }
+      for (const pr of BULK_IMPORT_BATCH.prompts) {
+        if (!state.prompts.some((x) => x.title === pr.title)) {
+          await addDoc(collection(db, base + "/prompts"), { ...pr, createdAt: serverTimestamp() });
+          addedCount++;
+        }
+      }
+      for (const item of BULK_IMPORT_BATCH.inbox) {
+        if (!state.inbox.some((x) => x.text === item.text)) {
+          await addDoc(collection(db, base + "/inbox"), { ...item, createdAt: serverTimestamp() });
+          addedCount++;
+        }
+      }
+
+      const statusEl = document.getElementById("cursosStatus");
+      if (addedCount > 0) {
+        const msg = "✅ Se importaron " + addedCount + " elementos nuevos del lote de Cursos.";
+        statusEl.textContent = msg;
+        showToast(msg);
+      } else {
+        const msg = "ℹ️ El lote de Cursos ya estaba importado por completo (sin duplicados).";
+        statusEl.textContent = msg;
+        showToast(msg);
+      }
+    }
+
+    function renderNoteCard(n) {
+      return "<div data-open-type='inbox' data-open-id='" + n.id + "' class='glass-card card-interactive rounded-2xl p-4 flex flex-col justify-between gap-2'>" +
+        "<div><div class='flex items-center justify-between text-[11px] text-silver mb-1.5'><span>" + escapeHtml(n.tag || "") + "</span><span class='font-semibold text-graphite'>Abrir →</span></div>" +
+        "<p class='text-sm whitespace-pre-line'>" + linkifyText(n.text) + "</p></div></div>";
+    }
+
+    function render() {
+      document.getElementById("badge-inbox").textContent = state.inbox.length;
+      document.getElementById("inboxList").innerHTML = state.inbox.map(renderNoteCard).join("");
+
+      const odontoItems = state.inbox.filter((n) => n.tag === "#odonto");
+      document.getElementById("odontoNotesList").innerHTML = odontoItems.length
+        ? odontoItems.map(renderNoteCard).join("")
+        : "<p class='text-xs text-silver'>Sin notas con #odonto todavía.</p>";
+
+      const cursosItems = state.inbox.filter((n) => n.tag === "#cursos");
+      document.getElementById("cursosNotesList").innerHTML = cursosItems.length
+        ? cursosItems.map(renderNoteCard).join("")
+        : "<p class='text-xs text-silver'>Tocá IMPORTAR LOTE AHORA para traer tus recursos.</p>";
+
+      document.getElementById("promptsList").innerHTML = state.prompts
+        .map((p) => "<div data-open-type='prompts' data-open-id='" + p.id + "' class='glass-card card-interactive rounded-2xl p-4'>" +
+          "<div class='flex items-center justify-between mb-1.5'><h3 class='font-bold text-sm'>" + escapeHtml(p.title) + "</h3><span class='text-[11px] font-semibold text-silver'>Abrir →</span></div>" +
+          "<p class='text-xs whitespace-pre-wrap bg-champagne p-3 rounded-xl border border-blush/60 line-clamp-3'>" + linkifyText(p.body) + "</p></div>")
+        .join("");
+
+      document.getElementById("projectsList").innerHTML = state.projects
+        .map((pr) => "<div data-open-type='projects' data-open-id='" + pr.id + "' class='glass-card card-interactive rounded-2xl p-4'>" +
+          "<div class='flex items-center justify-between mb-1'><h3 class='font-bold text-sm'>" + escapeHtml(pr.name) + "</h3><span class='text-[11px] font-semibold text-silver'>Abrir →</span></div>" +
+          "<p class='text-xs text-silver mt-1'>" + linkifyText(pr.desc || "") + "</p></div>")
+        .join("");
+    }
+
+    function listenData(uid) {
+      const base = "users/" + uid;
+      onSnapshot(query(collection(db, base + "/inbox"), orderBy("createdAt", "desc")), (snap) => {
+        state.inbox = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        render();
+      });
+      onSnapshot(query(collection(db, base + "/prompts"), orderBy("createdAt", "desc")), (snap) => {
+        state.prompts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        render();
+      });
+      onSnapshot(query(collection(db, base + "/projects"), orderBy("createdAt", "desc")), (snap) => {
+        state.projects = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        render();
+      });
+      onSnapshot(collection(db, base + "/webFiles"), async (snap) => {
+        if (snap.empty) {
+          await setDoc(doc(db, base + "/webFiles", "index_odonto"), {
+            name: "index.html",
+            code: getDefaultWebTemplate(),
+            updatedAt: serverTimestamp()
+          });
+          return;
+        }
+        state.webFiles = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        if (!activeWebFileId) {
+          activeWebFileId = state.webFiles[0].id;
+          document.getElementById("webCodeEditor").value = state.webFiles[0].code || "";
+          updateLivePreview();
+        }
+      });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appContainer").classList.remove("hidden");
+        document.getElementById("appContainer").classList.add("flex");
+        document.getElementById("userEmail").textContent = user.email;
+        listenData(user.uid);
+      } else {
+        currentUser = null;
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("appContainer").classList.add("hidden");
+      }
+    });
+
+    document.getElementById("btnGoogleLogin").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        const el = document.getElementById("loginError");
+        el.textContent = err.message;
+        el.classList.remove("hidden");
+      }
+    });
+
+    document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+    document.getElementById("btnImportBatchSide").addEventListener("click", importBulkBatch);
+    document.getElementById("btnImportBatchCursos").addEventListener("click", importBulkBatch);
+
+    document.querySelectorAll("[data-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+      const card = e.target.closest("[data-open-type]");
+      if (card) {
+        openDetailModal(card.dataset.openType, card.dataset.openId);
+      }
+    });
+
+    document.getElementById("btnCloseModal").addEventListener("click", closeDetailModal);
+    document.getElementById("btnCloseModalBottom").addEventListener("click", closeDetailModal);
+    document.getElementById("detailModal").addEventListener("click", (e) => {
+      if (e.target.id === "detailModal") closeDetailModal();
+    });
+
+    document.getElementById("btnCopyModalText").addEventListener("click", async () => {
+      if (!selectedItem) return;
+      await navigator.clipboard.writeText(selectedItem.rawText);
+      showToast("📋 Texto copiado al portapapeles.");
+    });
+
+    document.getElementById("btnDeleteItem").addEventListener("click", async () => {
+      if (!currentUser || !selectedItem) return;
+      await deleteDoc(doc(db, "users/" + currentUser.uid + "/" + selectedItem.type, selectedItem.id));
+      closeDetailModal();
+      showToast("🗑️ Elemento eliminado.");
+    });
+
+    document.getElementById("btnSaveQuickNote").addEventListener("click", async () => {
+      if (!currentUser) return;
+      const text = document.getElementById("quickText").value.trim();
+      const tag = document.getElementById("quickFolder").value;
+      if (!text) return;
+      await addDoc(collection(db, "users/" + currentUser.uid + "/inbox"), { text, tag, createdAt: serverTimestamp() });
+      document.getElementById("quickText").value = "";
+      showToast("✅ Nota guardada.");
+    });
+
+    document.getElementById("btnSaveWebCode").addEventListener("click", async () => {
+      if (!currentUser || !activeWebFileId) return;
+      await updateDoc(doc(db, "users/" + currentUser.uid + "/webFiles", activeWebFileId), {
+        code: document.getElementById("webCodeEditor").value,
+        updatedAt: serverTimestamp()
+      });
+      showToast("💾 Cambios del Taller Web guardados.");
+    });
+
+    document.getElementById("webCodeEditor").addEventListener("input", updateLivePreview);
+
+    document.getElementById("btnSavePrompt").addEventListener("click", async () => {
+      if (!currentUser) return;
+      const title = document.getElementById("promptTitle").value.trim();
+      const body = document.getElementById("promptBody").value.trim();
+      if (!title || !body) return;
+      await addDoc(collection(db, "users/" + currentUser.uid + "/prompts"), { title, body, createdAt: serverTimestamp() });
+      document.getElementById("promptTitle").value = "";
+      document.getElementById("promptBody").value = "";
+      showToast("✅ Prompt guardado.");
+    });
+
+    document.getElementById("btnCreateProject").addEventListener("click", async () => {
+      if (!currentUser) return;
+      const name = document.getElementById("projName").value.trim();
+      const desc = document.getElementById("projDesc").value.trim();
+      if (!name) return;
+      await addDoc(collection(db, "users/" + currentUser.uid + "/projects"), { name, desc, createdAt: serverTimestamp() });
+      document.getElementById("projName").value = "";
+      document.getElementById("projDesc").value = "";
+      showToast("✅ Proyecto creado.");
+    });
+  </script>
+</body>
+</html>

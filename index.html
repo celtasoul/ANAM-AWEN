@@ -36,6 +36,20 @@
     .nav-active { background-color: #F2D8E0 !important; font-weight: 700; }
     .auto-link { color: #9B5DE5; text-decoration: underline; word-break: break-all; }
     .auto-link:hover { color: #6D28D9; }
+    .status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+    .status-smuain { background-color: #F9EEF2; color: #8B4A5E; border: 1px solid #E8B8C8; }
+    .status-cursa { background-color: #EFEAFB; color: #5B468A; border: 1px solid #C8BFE0; }
+    .status-obair { background-color: #E8F5EF; color: #2D6A52; border: 1px solid #B7DEC9; }
+    .filter-active { background-color: #F2D8E0 !important; border-color: #D9A7B5 !important; font-weight: 700; }
+    .cal-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+    .cal-rose { background-color: #FCEBF1; color: #8F435C; border: 1px solid #F2C6D5; }
+    .cal-lilac { background-color: #EFEAFB; color: #59418C; border: 1px solid #D3C6F0; }
+    .cal-mint { background-color: #E7F6F0; color: #266752; border: 1px solid #BCE5D5; }
+    .cal-peach { background-color: #FFF0E5; color: #8C4D27; border: 1px solid #F7D3B7; }
+    .cal-card-rose { border-left: 4px solid #E39DB4; background: linear-gradient(180deg, #FFFFFF 0%, #FFF8FA 100%); }
+    .cal-card-lilac { border-left: 4px solid #B8A5E6; background: linear-gradient(180deg, #FFFFFF 0%, #FAF8FF 100%); }
+    .cal-card-mint { border-left: 4px solid #86CEB3; background: linear-gradient(180deg, #FFFFFF 0%, #F5FCF9 100%); }
+    .cal-card-peach { border-left: 4px solid #F0B488; background: linear-gradient(180deg, #FFFFFF 0%, #FFF9F4 100%); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
@@ -60,6 +74,10 @@
         <div class="px-2 pt-1 font-bold text-base uppercase tracking-wider">ANAM AWEN</div>
         <div class="space-y-1">
           <button type="button" data-tab="inicio" id="nav-inicio" class="nav-item nav-active cursor-pointer"><span>🏠 INICIO</span></button>
+          <button type="button" data-tab="calendario" id="nav-calendario" class="nav-item cursor-pointer">
+            <span>📅 CALENDARIO</span>
+            <span id="badge-events" class="text-[11px] bg-white px-2 py-0.5 rounded-full border border-blush font-semibold">0</span>
+          </button>
           <button type="button" data-tab="captura" id="nav-captura" class="nav-item cursor-pointer">
             <span>⚡ IDEA BAG (TREN)</span>
             <span id="badge-inbox" class="text-[11px] bg-white px-2 py-0.5 rounded-full border border-blush font-semibold">0</span>
@@ -99,6 +117,66 @@
       <section id="sec-inicio" class="space-y-4">
         <h1 class="text-2xl font-bold text-graphite">Hola, Celta ✨</h1>
         <p class="text-sm text-silver">Elegí una sección en el menú lateral para empezar o hacé clic en cualquier tarjeta para abrirla.</p>
+      </section>
+
+      <section id="sec-calendario" class="hidden space-y-5">
+        <div class="glass-card rounded-3xl p-5 md:p-6 space-y-4" style="background: linear-gradient(135deg, #FFFFFF 0%, #FDF6F9 55%, #F6F2FD 100%);">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold uppercase text-graphite">📅 CALENDARIO</h2>
+              <p class="text-xs text-silver">Organizá encuentros, entregas y recordatorios en colores suaves.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="cal-pill cal-rose">● Reunión</span>
+              <span class="cal-pill cal-lilac">● Clase / IA</span>
+              <span class="cal-pill cal-mint">● Clínica</span>
+              <span class="cal-pill cal-peach">● Personal</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <input type="text" id="eventTitle" placeholder="Título del evento..." class="sm:col-span-2 px-3.5 py-2.5 rounded-xl bg-white border border-blush text-sm focus:outline-none focus:border-rosequartz" />
+            <input type="datetime-local" id="eventDateTime" class="px-3.5 py-2.5 rounded-xl bg-white border border-blush text-xs font-semibold text-graphite focus:outline-none focus:border-rosequartz" />
+            <select id="eventColor" class="px-3.5 py-2.5 rounded-xl bg-white border border-blush text-xs font-bold uppercase text-graphite cursor-pointer focus:outline-none focus:border-rosequartz">
+              <option value="rose">🌸 Rosa · Reunión</option>
+              <option value="lilac">🪻 Lila · Clase / IA</option>
+              <option value="mint">🌿 Menta · Clínica</option>
+              <option value="peach">🍑 Durazno · Personal</option>
+            </select>
+          </div>
+
+          <textarea id="eventNotes" rows="3" placeholder="Detalles, enlaces o notas del encuentro..." class="w-full p-3.5 rounded-2xl bg-white border border-blush text-sm focus:outline-none focus:border-rosequartz"></textarea>
+
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <button type="button" id="btnToggleEventVoice" class="px-3.5 py-2 rounded-xl bg-white hover:bg-lavender/30 border border-lilac text-xs font-semibold text-graphite cursor-pointer">
+              🎙️ Dictar nota
+            </button>
+            <button type="button" id="btnSaveEvent" class="btn-primary px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide cursor-pointer">
+              + Guardar evento
+            </button>
+          </div>
+          <p id="eventVoiceStatus" class="text-[11px] text-silver hidden"></p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-cal-filter="ALL" class="cal-filter-btn filter-active px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            TODOS (<span id="cal-count-all">0</span>)
+          </button>
+          <button type="button" data-cal-filter="rose" class="cal-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            🌸 REUNIÓN (<span id="cal-count-rose">0</span>)
+          </button>
+          <button type="button" data-cal-filter="lilac" class="cal-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            🪻 CLASE / IA (<span id="cal-count-lilac">0</span>)
+          </button>
+          <button type="button" data-cal-filter="mint" class="cal-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            🌿 CLÍNICA (<span id="cal-count-mint">0</span>)
+          </button>
+          <button type="button" data-cal-filter="peach" class="cal-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            🍑 PERSONAL (<span id="cal-count-peach">0</span>)
+          </button>
+        </div>
+
+        <div id="eventsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
 
       <section id="sec-captura" class="hidden space-y-5">
@@ -164,11 +242,43 @@
 
       <section id="sec-proyectos" class="hidden space-y-4">
         <div class="glass-card rounded-2xl p-5 space-y-3">
-          <h2 class="text-lg font-bold uppercase">📂 PROYECTOS</h2>
-          <input type="text" id="projName" placeholder="Nombre del proyecto..." class="w-full px-3 py-2 rounded-xl bg-champagne border border-blush text-sm" />
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="text-lg font-bold uppercase">📂 PROYECTOS</h2>
+            <div class="flex flex-wrap items-center gap-2 text-[11px]">
+              <span class="status-badge status-smuain">● SMUAIN</span>
+              <span class="status-badge status-cursa">● CÙRSA</span>
+              <span class="status-badge status-obair">● OBAIR</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input type="text" id="projName" placeholder="Nombre del proyecto..." class="sm:col-span-2 px-3 py-2 rounded-xl bg-champagne border border-blush text-sm" />
+            <select id="projStatus" class="px-3 py-2 rounded-xl bg-champagne border border-blush text-xs font-bold uppercase cursor-pointer">
+              <option value="SMUAIN">SMUAIN</option>
+              <option value="CÙRSA">CÙRSA</option>
+              <option value="OBAIR">OBAIR</option>
+            </select>
+          </div>
           <textarea id="projDesc" rows="2" placeholder="Descripción..." class="w-full p-3 rounded-xl bg-champagne border border-blush text-sm"></textarea>
-          <button type="button" id="btnCreateProject" class="btn-primary px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer">Crear Proyecto</button>
+          <div class="flex justify-end">
+            <button type="button" id="btnCreateProject" class="btn-primary px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer">Crear Proyecto</button>
+          </div>
         </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" data-status-filter="ALL" class="proj-filter-btn filter-active px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            TODOS (<span id="count-all">0</span>)
+          </button>
+          <button type="button" data-status-filter="SMUAIN" class="proj-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            SMUAIN (<span id="count-smuain">0</span>)
+          </button>
+          <button type="button" data-status-filter="CÙRSA" class="proj-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            CÙRSA (<span id="count-cursa">0</span>)
+          </button>
+          <button type="button" data-status-filter="OBAIR" class="proj-filter-btn px-3.5 py-1.5 rounded-xl bg-champagne border border-blush text-xs uppercase cursor-pointer">
+            OBAIR (<span id="count-obair">0</span>)
+          </button>
+        </div>
+
         <div id="projectsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
     </main>
@@ -216,10 +326,40 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
+    const PROJECT_STATUSES = ["SMUAIN", "CÙRSA", "OBAIR"];
+    const CAL_THEMES = {
+      rose: { label: "Reunión", pill: "cal-pill cal-rose", card: "cal-card-rose" },
+      lilac: { label: "Clase / IA", pill: "cal-pill cal-lilac", card: "cal-card-lilac" },
+      mint: { label: "Clínica", pill: "cal-pill cal-mint", card: "cal-card-mint" },
+      peach: { label: "Personal", pill: "cal-pill cal-peach", card: "cal-card-peach" }
+    };
+
     let currentUser = null;
-    let state = { inbox: [], prompts: [], projects: [], webFiles: [] };
+    let state = { inbox: [], prompts: [], projects: [], events: [], webFiles: [] };
     let activeWebFileId = null;
     let selectedItem = null;
+    let activeProjectFilter = "ALL";
+    let activeCalFilter = "ALL";
+    let eventVoiceRec = null;
+    let isEventRecording = false;
+
+    function normalizeStatus(raw) {
+      const s = String(raw || "").toUpperCase();
+      if (s === "CÙRSA" || s === "CURSA") return "CÙRSA";
+      if (s === "OBAIR") return "OBAIR";
+      return "SMUAIN";
+    }
+
+    function getStatusBadgeClass(status) {
+      const normalized = normalizeStatus(status);
+      if (normalized === "CÙRSA") return "status-badge status-cursa";
+      if (normalized === "OBAIR") return "status-badge status-obair";
+      return "status-badge status-smuain";
+    }
+
+    function getCalTheme(colorKey) {
+      return CAL_THEMES[colorKey] || CAL_THEMES.rose;
+    }
 
     function showToast(msg) {
       const el = document.getElementById("toastBanner");
@@ -249,7 +389,7 @@
 
     const BULK_IMPORT_BATCH = {
       projects: [
-        { name: "Formación IA & Monetización (Consultora)", desc: "Materiales de cursos para diseñar ofertas de consultoría, agentes/flujos IA y formaciones B2B." }
+        { name: "Formación IA & Monetización (Consultora)", desc: "Materiales de cursos para diseñar ofertas de consultoría, agentes/flujos IA y formaciones B2B.", status: "CÙRSA" }
       ],
       prompts: [
         { title: "Voz a Guion para Reels", body: "Convierte mi audio en un guion para Reels con hook, desarrollo y CTA." },
@@ -265,7 +405,7 @@
     };
 
     function switchTab(tab) {
-      ["inicio", "captura", "taller", "odonto", "cursos", "prompts", "proyectos"].forEach((t) => {
+      ["inicio", "calendario", "captura", "taller", "odonto", "cursos", "prompts", "proyectos"].forEach((t) => {
         document.getElementById("sec-" + t).classList.add("hidden");
         document.getElementById("nav-" + t).classList.remove("nav-active");
       });
@@ -299,9 +439,16 @@
       } else if (type === "projects") {
         item = state.projects.find((x) => x.id === id);
         if (!item) return;
-        badge = "PROYECTO";
+        badge = "PROYECTO · " + normalizeStatus(item.status);
         title = item.name || "Proyecto";
         rawText = item.desc || "Sin descripción.";
+      } else if (type === "events") {
+        item = state.events.find((x) => x.id === id);
+        if (!item) return;
+        const theme = getCalTheme(item.color);
+        badge = theme.label + (item.when ? " · " + item.when : "");
+        title = item.title || "Evento";
+        rawText = item.notes || "Sin notas.";
       }
 
       selectedItem = { type, id, rawText };
@@ -316,6 +463,17 @@
       document.getElementById("detailModal").classList.add("hidden");
     }
 
+    async function cycleProjectStatus(projectId, event) {
+      if (event) event.stopPropagation();
+      if (!currentUser) return;
+      const proj = state.projects.find((p) => p.id === projectId);
+      if (!proj) return;
+      const current = normalizeStatus(proj.status);
+      const next = PROJECT_STATUSES[(PROJECT_STATUSES.indexOf(current) + 1) % PROJECT_STATUSES.length];
+      await updateDoc(doc(db, "users/" + currentUser.uid + "/projects", projectId), { status: next });
+      showToast("🏷️ Estado actualizado a: " + next);
+    }
+
     async function importBulkBatch() {
       if (!currentUser) return;
       const base = "users/" + currentUser.uid;
@@ -323,7 +481,7 @@
 
       for (const p of BULK_IMPORT_BATCH.projects) {
         if (!state.projects.some((x) => x.name === p.name)) {
-          await addDoc(collection(db, base + "/projects"), { ...p, createdAt: serverTimestamp() });
+          await addDoc(collection(db, base + "/projects"), { ...p, status: normalizeStatus(p.status), createdAt: serverTimestamp() });
           addedCount++;
         }
       }
@@ -358,8 +516,32 @@
         "<p class='text-sm whitespace-pre-line'>" + linkifyText(n.text) + "</p></div></div>";
     }
 
+    function renderProjectCard(pr) {
+      const status = normalizeStatus(pr.status);
+      return "<div data-open-type='projects' data-open-id='" + pr.id + "' class='glass-card card-interactive rounded-2xl p-4 space-y-2'>" +
+        "<div class='flex items-center justify-between gap-2'>" +
+        "<button type='button' data-cycle-status='" + pr.id + "' title='Cambiar estado (SMUAIN / CÙRSA / OBAIR)' class='" + getStatusBadgeClass(status) + " cursor-pointer'>● " + escapeHtml(status) + " ↻</button>" +
+        "<span class='text-[11px] font-semibold text-silver'>Abrir →</span>" +
+        "</div>" +
+        "<h3 class='font-bold text-sm text-graphite'>" + escapeHtml(pr.name) + "</h3>" +
+        "<p class='text-xs text-silver'>" + linkifyText(pr.desc || "") + "</p></div>";
+    }
+
+    function renderEventCard(ev) {
+      const theme = getCalTheme(ev.color);
+      return "<div data-open-type='events' data-open-id='" + ev.id + "' class='glass-card card-interactive rounded-2xl p-4 space-y-2 " + theme.card + "'>" +
+        "<div class='flex items-center justify-between gap-2'>" +
+        "<span class='" + theme.pill + "'>● " + escapeHtml(theme.label) + "</span>" +
+        "<span class='text-[11px] font-semibold text-silver'>" + escapeHtml(ev.when || "Sin fecha") + "</span>" +
+        "</div>" +
+        "<h3 class='font-bold text-sm text-graphite'>" + escapeHtml(ev.title) + "</h3>" +
+        (ev.notes ? "<p class='text-xs text-silver line-clamp-2'>" + linkifyText(ev.notes) + "</p>" : "") +
+        "</div>";
+    }
+
     function render() {
       document.getElementById("badge-inbox").textContent = state.inbox.length;
+      document.getElementById("badge-events").textContent = state.events.length;
       document.getElementById("inboxList").innerHTML = state.inbox.map(renderNoteCard).join("");
 
       const odontoItems = state.inbox.filter((n) => n.tag === "#odonto");
@@ -378,11 +560,36 @@
           "<p class='text-xs whitespace-pre-wrap bg-champagne p-3 rounded-xl border border-blush/60 line-clamp-3'>" + linkifyText(p.body) + "</p></div>")
         .join("");
 
-      document.getElementById("projectsList").innerHTML = state.projects
-        .map((pr) => "<div data-open-type='projects' data-open-id='" + pr.id + "' class='glass-card card-interactive rounded-2xl p-4'>" +
-          "<div class='flex items-center justify-between mb-1'><h3 class='font-bold text-sm'>" + escapeHtml(pr.name) + "</h3><span class='text-[11px] font-semibold text-silver'>Abrir →</span></div>" +
-          "<p class='text-xs text-silver mt-1'>" + linkifyText(pr.desc || "") + "</p></div>")
-        .join("");
+      const smuainCount = state.projects.filter((p) => normalizeStatus(p.status) === "SMUAIN").length;
+      const cursaCount = state.projects.filter((p) => normalizeStatus(p.status) === "CÙRSA").length;
+      const obairCount = state.projects.filter((p) => normalizeStatus(p.status) === "OBAIR").length;
+
+      document.getElementById("count-all").textContent = state.projects.length;
+      document.getElementById("count-smuain").textContent = smuainCount;
+      document.getElementById("count-cursa").textContent = cursaCount;
+      document.getElementById("count-obair").textContent = obairCount;
+
+      const filteredProjects = activeProjectFilter === "ALL"
+        ? state.projects
+        : state.projects.filter((p) => normalizeStatus(p.status) === activeProjectFilter);
+
+      document.getElementById("projectsList").innerHTML = filteredProjects.length
+        ? filteredProjects.map(renderProjectCard).join("")
+        : "<p class='text-xs text-silver col-span-full'>No hay proyectos en este estado.</p>";
+
+      document.getElementById("cal-count-all").textContent = state.events.length;
+      document.getElementById("cal-count-rose").textContent = state.events.filter((e) => e.color === "rose").length;
+      document.getElementById("cal-count-lilac").textContent = state.events.filter((e) => e.color === "lilac").length;
+      document.getElementById("cal-count-mint").textContent = state.events.filter((e) => e.color === "mint").length;
+      document.getElementById("cal-count-peach").textContent = state.events.filter((e) => e.color === "peach").length;
+
+      const filteredEvents = activeCalFilter === "ALL"
+        ? state.events
+        : state.events.filter((e) => e.color === activeCalFilter);
+
+      document.getElementById("eventsList").innerHTML = filteredEvents.length
+        ? filteredEvents.map(renderEventCard).join("")
+        : "<p class='text-xs text-silver col-span-full'>Todavía no hay eventos en esta categoría.</p>";
     }
 
     function listenData(uid) {
@@ -397,6 +604,10 @@
       });
       onSnapshot(query(collection(db, base + "/projects"), orderBy("createdAt", "desc")), (snap) => {
         state.projects = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        render();
+      });
+      onSnapshot(query(collection(db, base + "/events"), orderBy("createdAt", "desc")), (snap) => {
+        state.events = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         render();
       });
       onSnapshot(collection(db, base + "/webFiles"), async (snap) => {
@@ -450,7 +661,80 @@
       btn.addEventListener("click", () => switchTab(btn.dataset.tab));
     });
 
+    document.querySelectorAll("[data-status-filter]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeProjectFilter = btn.dataset.statusFilter;
+        document.querySelectorAll(".proj-filter-btn").forEach((b) => b.classList.remove("filter-active"));
+        btn.classList.add("filter-active");
+        render();
+      });
+    });
+
+    document.querySelectorAll("[data-cal-filter]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeCalFilter = btn.dataset.calFilter;
+        document.querySelectorAll(".cal-filter-btn").forEach((b) => b.classList.remove("filter-active"));
+        btn.classList.add("filter-active");
+        render();
+      });
+    });
+
+    document.getElementById("btnToggleEventVoice").addEventListener("click", () => {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const statusEl = document.getElementById("eventVoiceStatus");
+      statusEl.classList.remove("hidden");
+      if (!SpeechRec) {
+        statusEl.textContent = "Dictado no disponible en este navegador.";
+        return;
+      }
+      if (!isEventRecording) {
+        eventVoiceRec = new SpeechRec();
+        eventVoiceRec.lang = "es-AR";
+        eventVoiceRec.continuous = true;
+        eventVoiceRec.interimResults = false;
+        eventVoiceRec.onresult = (ev) => {
+          const transcript = Array.from(ev.results).slice(ev.resultIndex).map((r) => r[0].transcript).join(" ");
+          const notesEl = document.getElementById("eventNotes");
+          notesEl.value = (notesEl.value ? notesEl.value + " " : "") + transcript;
+        };
+        eventVoiceRec.start();
+        isEventRecording = true;
+        document.getElementById("btnToggleEventVoice").textContent = "⏹️ Detener dictado";
+        statusEl.textContent = "Escuchando...";
+      } else {
+        eventVoiceRec.stop();
+        isEventRecording = false;
+        document.getElementById("btnToggleEventVoice").textContent = "🎙️ Dictar nota";
+        statusEl.textContent = "Dictado pausado.";
+      }
+    });
+
+    document.getElementById("btnSaveEvent").addEventListener("click", async () => {
+      if (!currentUser) return;
+      const title = document.getElementById("eventTitle").value.trim();
+      const whenRaw = document.getElementById("eventDateTime").value;
+      const color = document.getElementById("eventColor").value;
+      const notes = document.getElementById("eventNotes").value.trim();
+      if (!title && !notes) return;
+      const whenFormatted = whenRaw ? whenRaw.replace("T", " ") : "Sin fecha";
+      await addDoc(collection(db, "users/" + currentUser.uid + "/events"), {
+        title: title || "Evento",
+        when: whenFormatted,
+        color,
+        notes,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById("eventTitle").value = "";
+      document.getElementById("eventNotes").value = "";
+      showToast("📅 Evento guardado en el calendario.");
+    });
+
     document.addEventListener("click", (e) => {
+      const cycleBtn = e.target.closest("[data-cycle-status]");
+      if (cycleBtn) {
+        cycleProjectStatus(cycleBtn.dataset.cycleStatus, e);
+        return;
+      }
       if (e.target.closest("a")) return;
       const card = e.target.closest("[data-open-type]");
       if (card) {
@@ -512,12 +796,13 @@
     document.getElementById("btnCreateProject").addEventListener("click", async () => {
       if (!currentUser) return;
       const name = document.getElementById("projName").value.trim();
+      const status = normalizeStatus(document.getElementById("projStatus").value);
       const desc = document.getElementById("projDesc").value.trim();
       if (!name) return;
-      await addDoc(collection(db, "users/" + currentUser.uid + "/projects"), { name, desc, createdAt: serverTimestamp() });
+      await addDoc(collection(db, "users/" + currentUser.uid + "/projects"), { name, status, desc, createdAt: serverTimestamp() });
       document.getElementById("projName").value = "";
       document.getElementById("projDesc").value = "";
-      showToast("✅ Proyecto creado.");
+      showToast("✅ Proyecto creado en " + status + ".");
     });
   </script>
 </body>
